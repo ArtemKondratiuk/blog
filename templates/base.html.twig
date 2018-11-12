@@ -6,7 +6,13 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% block body %}
+            <ul>
+                {% for article in articles %}
+                    <li>{{ article.text | title}}</li>
+                {% endfor %}
+            </ul>
+        {% endblock %}
         {% block javascripts %}{% endblock %}
     </body>
 </html>
