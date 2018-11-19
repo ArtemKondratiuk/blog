@@ -24,8 +24,7 @@ class Article
      * @var string
      *
      * @Assert\NotBlank()
-     * @Assert\Length(max="10", min="3", maxMessage="Too much", minMessage="Not enough")
-     * @ORM\Column(type="string", length=190)
+     *@ORM\Column(type="text")
      */
     private $text;
 

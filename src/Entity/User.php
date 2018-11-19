@@ -39,11 +39,6 @@ class User implements UserInterface
     }
 
     /**
-     * @Assert\NotBlank()
-     * @Assert\Length(max=4096)
-     */
-
-    /**
      * @ORM\Column(type="string")
      * @Assert\NotBlank()
      */
@@ -60,7 +55,7 @@ class User implements UserInterface
      * @Assert\NotBlank()
      * @Assert\Length(
      *     min = 6,
-     *     max = 11,
+     *     max = 20,
      *     minMessage = "Your password must be at least {{ limit }} characters long",
      *     maxMessage = "Your password cannot be longer than {{ limit }} characters"
      * )
