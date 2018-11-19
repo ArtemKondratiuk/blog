@@ -7,6 +7,14 @@ parameters:
     locale: 'en'
 
 services:
+#    App\EventListener\HashPasswordListener:
+#        tags:
+#              - { name: doctrine.event_subscriber }
+    app.doctrine.hash_password_listener:
+        class: App\EventListener\HashPasswordListener
+        autowire: true
+        tags:
+            - { name: doctrine.event_subscriber }
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
