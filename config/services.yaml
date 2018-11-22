@@ -7,9 +7,6 @@ parameters:
     locale: 'en'
 
 services:
-#    App\EventListener\HashPasswordListener:
-#        tags:
-#              - { name: doctrine.event_subscriber }
     app.doctrine.hash_password_listener:
         class: App\EventListener\HashPasswordListener
         autowire: true
