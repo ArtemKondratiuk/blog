@@ -32,7 +32,7 @@ class SecurityController extends AbstractController
     }
 
     /**
-     * @Route("/article")
+     * @Route("/admin")
      */
     public function admin()
     {
