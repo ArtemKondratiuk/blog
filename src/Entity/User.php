@@ -2,16 +2,20 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="user")
+ *
  * @UniqueEntity("email", message="Email already taken")
  */
+//@ORM\EntityListeners({"App\EntityListener\UserListener"})
 class User implements UserInterface
 {
     /**
@@ -35,7 +39,11 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->roles = ['ROLE_USER'];
+//        $this->roles = ['ROLE_USER'];
+        $this->roles = ['ROLE_ADMIN'];
+//        $this->roles = ['ROLE_BLOGER'];
+        $this->roles = ['ROLE_READER'];
+        $this->like = new ArrayCollection();
     }
 
     /**
@@ -61,6 +69,15 @@ class User implements UserInterface
      * )
      */
     private $password;
+
+    /**
+     * @var UserLike[]|ArrayCollection
+     *
+     * @ORM\ManyToMany(targetEntity="App\Entity\UserLike", cascade={"persist"})
+     * @ORM\JoinTable(name="likes")
+     */
+    private $like;
+
 
     /**
      * @return int
@@ -184,6 +201,43 @@ class User implements UserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return UserLike[]|ArrayCollection
+     */
+    public function getLike()
+    {
+        return $this->like;
+    }
+
+    /**
+     * @param UserLike[]|ArrayCollection $like
+     * @return User
+     */
+    public function setLike($like): self
+    {
+        $this->like = $like;
+
+        return $this;
+    }
+
+    public function addLike(UserLike $like): self
+    {
+        if (!$this->like->contains($like)) {
+            $this->like[] = $like;
+        }
+
+        return $this;
+    }
+
+    public function removeLike(UserLike $like): self
+    {
+        if ($this->like->contains($like)) {
+            $this->like->removeElement($like);
+        }
+
+        return $this;
     }
 
 }

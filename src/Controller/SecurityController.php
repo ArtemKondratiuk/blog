@@ -30,4 +30,13 @@ class SecurityController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+
+    /**
+     * @Route("/article")
+     */
+    public function admin()
+    {
+        return $this->render('admin.html.twig');
+    }
+
 }

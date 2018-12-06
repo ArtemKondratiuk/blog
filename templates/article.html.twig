@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article{% endblock %}
+
+{% block body %}
+
+    {% block header %}
+        {{ parent() }}
+    {% endblock header %}
+
+    <p>{{ article.title }}</p>
+    <p>{{ article.text }}</p>
+
+    {% if not article.tags.empty %}
+            {% for tag in article.tags %}
+                 {{ tag.name }}
+            {% endfor %}
+    {% endif %}
+
+        {% for comment in comments %}
+           <p>{{ comment.text }}</p>
+        {% endfor %}
+
+    {{ form_start(form) }}
+    {{ form_row(form.text) }}
+
+    <button type="submit">Submit!</button>
+    {{ form_end(form) }}
+{% endblock %}

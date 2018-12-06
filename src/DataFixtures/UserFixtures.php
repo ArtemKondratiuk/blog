@@ -21,11 +21,11 @@ class UserFixtures extends Fixture
         $user = new User();
         $encodedPassword = $this->passwordEncoder->encodePassword($user, '123123');
         $user
-            ->setRoles([' ROLE_USER'])
-            ->setFirstName('qwe')
-            ->setLastName('qwe')
-            ->setEmail('qwe@gmail.com')
-            ->setPassword($encodedPassword);
+            ->setFirstName('admin')
+            ->setLastName('admin')
+            ->setEmail('admin@gmail.com')
+            ->setPassword($encodedPassword)
+            ->setRoles(['ROLE_ADMIN']);
         $manager->persist($user);
         $manager->flush();
     }

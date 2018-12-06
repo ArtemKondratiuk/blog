@@ -13,19 +13,25 @@
                 <nav>
                     <ul class="menu">
                         <li><a href="{{ path('app_login') }}">Login</a></li>
-                        <li><a href="{{ path('app_logout') }}">Log out</a></li>
+                        <li><a href="{{ path('app_logout') }}">Logout</a></li>
                         <li><a href="{{ path('app_user_register') }}">Registration</a></li>
                     </ul>
                 </nav>
             </div>
         </header>
+        <hr>
     {% endblock header %}
     {% block main_content %}
         <ul>
-            {% for article in articles %}
-                <li>{{ article.text | title}}</li>
+            {% for article in  pagination %}
+                <li>{{ article.title }}</li>
+                {{ article.text }}  <br>
+                <p><a class="more" href="{{ path('article', { 'id': article.id }) }}">read more...</a></p>
             {% endfor %}
         </ul>
+        <div class="navigation">
+            {{ knp_pagination_render(pagination) }}
+        </div>
     {% endblock %}
 {% endblock %}
 {% block javascripts %}{% endblock %}

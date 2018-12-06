@@ -6,3 +6,4 @@ app_logout:
 
 login_check:
   path: /login_check
+
