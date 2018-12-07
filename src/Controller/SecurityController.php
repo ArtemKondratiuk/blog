@@ -31,12 +31,4 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin")
-     */
-    public function admin()
-    {
-        return $this->render('admin.html.twig');
-    }
-
 }
