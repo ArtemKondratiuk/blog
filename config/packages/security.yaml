@@ -2,7 +2,7 @@ security:
 
     role_hierarchy:
         ROLE_ADMIN: ROLE_ADMIN
-#        ROLE_BLOGER: ROLE_BLOGER
+        ROLE_BLOGER: ROLE_BLOGER
         ROLE_READER: ROLE_READER
 
 
@@ -48,7 +48,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
         - { path: ^/admin, roles: ROLE_ADMIN }
-#        - { path: ^/home, roles: ROLE_BLOGER }
+        - { path: ^/bloger, roles: ROLE_BLOGER }
         - { path: ^/home, roles: ROLE_READER }
 
 

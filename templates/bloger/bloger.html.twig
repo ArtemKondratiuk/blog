@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New Article{% endblock %}
+
+{% block body %}
+    <h1>Hi Bloger!</h1>
+    <h3>Create new Article</h3>
+
+    {{ form_start(form) }}
+    {{ form_row(form.title) }}
+    {{ form_row(form.text) }}
+
+    <button type="submit">Save</button>
+    {{ form_end(form) }}
+
+{% endblock %}
