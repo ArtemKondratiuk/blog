@@ -2,25 +2,34 @@
 
 namespace App\Entity;
 
-
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity
- * @ORM\Table(name="user_like")
+ * @ORM\Entity(repositoryClass="App\Repository\UserLikeRepository")
  */
 class UserLike
 {
     /**
-     * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\Id()
+     * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     */private $id;
+     */
+    private $id;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="boolean", nullable=true)
      */
-    private $like;
+    private $likes;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="userLikes")
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Article", inversedBy="userLikes")
+     */
+    private $article;
 
     /**
      * @return mixed
@@ -33,19 +42,64 @@ class UserLike
     /**
      * @return mixed
      */
-    public function getLike()
+    public function getLikes(): ?bool
     {
-        return $this->like;
+        return $this->likes;
     }
 
     /**
-     * @param mixed $like
+     * @param mixed $likes
      * @return UserLike
      */
-    public function setLike($like): self
+    public function setLikes(?bool $likes): self
     {
-        $this->like = $like;
+        $this->likes = $likes;
 
         return $this;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param mixed $user
+     * @return UserLike
+     */
+    public function setUser($user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getArticle()
+    {
+        return $this->article;
+    }
+
+    /**
+     * @param mixed $article
+     * @return UserLike
+     */
+    public function setArticle($article): self
+    {
+        $this->article = $article;
+
+        return $this;
+    }
+
+    public function __toString() {
+        return $this->likes;
+    }
+
+
+
 }

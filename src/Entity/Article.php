@@ -72,9 +72,14 @@ class Article
      * @ORM\ManyToMany(targetEntity="App\Entity\Tag", cascade={"persist"})
      * @ORM\JoinTable(name="aricle_tag")
      * @ORM\OrderBy({"name": "ASC"})
-     * @Assert\Count(max="4", maxMessage="post.too_many_tags")
+     * @Assert\Count(max="4", maxMessage="article.too_many_tags")
      */
     private $tags;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="article")
+     */
+    private $userLikes;
 
     public function __construct()
 
@@ -82,6 +87,7 @@ class Article
 //        $this->publishedAt = new \DateTime();
         $this->comments = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->userLikes = new ArrayCollection();
     }
 
     /**
@@ -244,6 +250,34 @@ class Article
             $this->tags->removeElement($tag);
         }
 
+        return $this;
+    }
+
+    /**
+     * @return ArrayCollection|UserLike[]
+     */
+    public function getUserLikes()
+    {
+        return $this->userLikes;
+    }
+
+    public function addUserLike(UserLike $userLike): self
+    {
+        if (!$this->userLikes->contains($userLike)) {
+            $this->userLikes[] = $userLike;
+            $userLike->setArticle($this);
+        }
+        return $this;
+    }
+    public function removeUserLike(UserLike $userLike): self
+    {
+        if ($this->userLikes->contains($userLike)) {
+            $this->userLikes->removeElement($userLike);
+            // set the owning side to null (unless already changed)
+            if ($userLike->getArticle() === $this) {
+                $userLike->setArticle(null);
+            }
+        }
         return $this;
     }
 

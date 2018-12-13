@@ -11,10 +11,12 @@
     <p>{{ article.title }}</p>
     <p>{{ article.text }}</p>
 
+    <p><a href="{{ path('like', { 'id':article.id }) }}">Likes! {{ allLike }}</a></p>
+
     {% if not article.tags.empty %}
-            {% for tag in article.tags %}
-                 {{ tag.name }}
-            {% endfor %}
+        {% for tag in article.tags %}
+            {{ tag.name }}
+        {% endfor %}
     {% endif %}
 
         {% for comment in comments %}

@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Article;
+use App\Entity\User;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -15,13 +16,14 @@ class ArticleType extends AbstractType
     {
         $builder
             ->add('title', TextareaType::class)
-            ->add('text', TextareaType::class);
+            ->add('text', TextareaType::class)
+        ;
     }
 
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => Article::class,
+            'data_class' => Article::class, User::class
         ]);
     }
 }

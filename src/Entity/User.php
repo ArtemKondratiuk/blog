@@ -2,16 +2,17 @@
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\Collection;
+
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Entity
- * @ORM\Table(name="user")
+ * @ORM\Table(name="users")
  *
  * @UniqueEntity("email", message="Email already taken")
  */
@@ -37,13 +38,14 @@ class User implements UserInterface
      */
     private $roles = [];
 
+
     public function __construct()
     {
 //        $this->roles = ['ROLE_USER'];
         $this->roles = ['ROLE_ADMIN'];
 //        $this->roles = ['ROLE_BLOGER'];
         $this->roles = ['ROLE_READER'];
-        $this->like = new ArrayCollection();
+        $this->userLikes = new ArrayCollection();
     }
 
     /**
@@ -71,12 +73,10 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @var UserLike[]|ArrayCollection
-     *
-     * @ORM\ManyToMany(targetEntity="App\Entity\UserLike", cascade={"persist"})
-     * @ORM\JoinTable(name="likes")
+     * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="user")
      */
-    private $like;
+    private $userLikes;
+
 
 
     /**
@@ -204,39 +204,29 @@ class User implements UserInterface
     }
 
     /**
-     * @return UserLike[]|ArrayCollection
+     * @return ArrayCollection|UserLike[]
      */
-    public function getLike()
+    public function getUserLike(): ArrayCollection
     {
-        return $this->like;
+        return $this->userLikes;
     }
-
-    /**
-     * @param UserLike[]|ArrayCollection $like
-     * @return User
-     */
-    public function setLike($like): self
+    public function addUserLike(UserLike $likes): self
     {
-        $this->like = $like;
-
+        if (!$this->userLikes->contains($likes)) {
+            $this->userLikes[] = $likes;
+            $likes->setUser($this);
+        }
         return $this;
     }
-
-    public function addLike(UserLike $like): self
+    public function removeUserLike(UserLike $likes): self
     {
-        if (!$this->like->contains($like)) {
-            $this->like[] = $like;
+        if ($this->userLikes->contains($likes)) {
+            $this->userLikes->removeElement($likes);
+            // set the owning side to null (unless already changed)
+            if ($likes->getUser() === $this) {
+                $likes->setUser(null);
+            }
         }
-
-        return $this;
-    }
-
-    public function removeLike(UserLike $like): self
-    {
-        if ($this->like->contains($like)) {
-            $this->like->removeElement($like);
-        }
-
         return $this;
     }
 

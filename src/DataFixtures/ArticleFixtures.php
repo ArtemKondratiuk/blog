@@ -9,6 +9,7 @@ use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\Tag;
 
+
 class ArticleFixtures extends Fixture
 {
     public function load(ObjectManager $manager)
