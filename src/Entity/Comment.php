@@ -3,7 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
@@ -32,27 +32,27 @@ class Comment
      */
     private $article;
 
-//    /**
-//     * @var \DateTime
-//     *
-//     * @ORM\Column(type="datetime")
-//     * @Assert\Type("\DateTime")
-//     * @Assert\NotBlank()
-//     */
-//    private $publishedAt;
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetime")
+     * @Assert\Type("\DateTime")
+     * @Assert\NotBlank()
+     */
+    private $publishedAt;
 
-//    /**
-//     * @var User
-//     *
-//     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-//     * @ORM\JoinColumn(nullable=false)
-//     */
-//    private $author;
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $author;
 
-//    public function __construct()
-//    {
-//        $this->publishedAt = new \DateTime();
-//    }
+    public function __construct()
+    {
+        $this->publishedAt = new \DateTime();
+    }
 
     /**
      * @return int
@@ -100,43 +100,47 @@ class Comment
         return $this;
     }
 
-//    /**
-//     * @return \DateTime
-//     */
-//    public function getPublishedAt(): \DateTime
-//    {
-//        return $this->publishedAt;
-//    }
-//
-//    /**
-//     * @param \DateTime $publishedAt
-//     * @return Comment
-//     */
-//    public function setPublishedAt(\DateTime $publishedAt): self
-//    {
-//        $this->publishedAt = $publishedAt;
-//
-//        return $this;
-//    }
+    /**
+     * @return \DateTime
+     */
+    public function getPublishedAt(): \DateTime
+    {
+        return $this->publishedAt;
+    }
 
-//    /**
-//     * @return User
-//     */
-//    public function getAuthor(): User
-//    {
-//        return $this->author;
-//    }
-//
-//    /**
-//     * @param User $author
-//     * @return Comment
-//     */
-//    public function setAuthor(User $author): self
-//    {
-//        $this->author = $author;
-//
-//        return $this;
-//    }
+    /**
+     * @param \DateTime $publishedAt
+     * @return Comment
+     */
+    public function setPublishedAt(\DateTime $publishedAt): self
+    {
+        $this->publishedAt = $publishedAt;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     * @return User
+     */
+    public function getAuthor(): User
+    {
+        return $this->author;
+    }
+
+    /**
+     * Set author
+     *
+     * @param User $author
+     *
+     * @return Comment
+     */
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
+
+        return $this;
+    }
 
 
 

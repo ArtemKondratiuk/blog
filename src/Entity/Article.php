@@ -37,22 +37,28 @@ class Article
      */
     private $text;
 
-//    /**
-//     * @var \DateTime
-//     *
-//     * @ORM\Column(type="datetime")
-//     * @Assert\Type('\DateTime')
-//     * @Assert\NotBlank()
-//     */
-//    private $publishedAt;
+    /**
+     * @var Article
+     *
+     * @ORM\Column(type="string", length=255)
+     */
+    private $image;
 
-//    /**
-//     * @var User
-//     *
-//     * @ORM\ManyToOne(targetEntity="App\Entity\User")
-//     * @ORM\JoinColumn(nullable=false)
-//     */
-//    private $author;
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetime")
+     * @Assert\DateTime
+     */
+    private $publishedAt;
+
+    /**
+     * @var User
+     *
+     * @ORM\ManyToOne(targetEntity="App\Entity\User")
+     * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     */
+    private $author;
 
     /**
      * @var Comment[]|ArrayCollection
@@ -84,7 +90,7 @@ class Article
     public function __construct()
 
     {
-//        $this->publishedAt = new \DateTime();
+        $this->publishedAt = new \DateTime();
         $this->comments = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->userLikes = new ArrayCollection();
@@ -174,43 +180,47 @@ class Article
         return $this;
     }
 
-//    /**
-//     * @return \DateTime
-//     */
-//    public function getPublishedAt(): \DateTime
-//    {
-//        return $this->publishedAt;
-//    }
-//
-//    /**
-//     * @param \DateTime $publishedAt
-//     * @return Article
-//     */
-//    public function setPublishedAt(\DateTime $publishedAt): self
-//    {
-//        $this->publishedAt = $publishedAt;
-//
-//        return $this;
-//    }
+    /**
+     * @return \DateTime
+     */
+    public function getPublishedAt(): \DateTime
+    {
+        return $this->publishedAt;
+    }
 
-//    /**
-//     * @return User
-//     */
-//    public function getAuthor(): User
-//    {
-//        return $this->author;
-//    }
+    /**
+     * @param \DateTime $publishedAt
+     * @return Article
+     */
+    public function setPublishedAt(\DateTime $publishedAt): self
+    {
+        $this->publishedAt = $publishedAt;
 
-//    /**
-//     * @param User $author
-//     * @return Article
-//     */
-//    public function setAuthor(User $author): self
-//    {
-//        $this->author = $author;
-//
-//        return $this;
-//    }
+        return $this;
+    }
+
+    /**
+     * Get user
+     *@return User
+     */
+    public function getAuthor(): User
+    {
+        return $this->author;
+    }
+
+    /**
+     * Set author
+     *
+     * @param User $author
+     *
+     * @return Article
+     */
+    public function setAuthor(?User $author): self
+    {
+        $this->author = $author;
+
+        return $this;
+    }
 
     public function addTag(?Tag ...$tags): void
     {
@@ -280,5 +290,19 @@ class Article
         }
         return $this;
     }
+
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): self
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+
 
 }

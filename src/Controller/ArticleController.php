@@ -29,7 +29,7 @@ class ArticleController extends Controller
         $pagination = $paginator->paginate(
             $articles, /* query NOT result */
             $request->query->getInt('page', 1)/*page number*/,
-            5/*limit per page*/
+            2/*limit per page*/
         );
 
         return $this->render('base.html.twig', [
