@@ -3,9 +3,10 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
@@ -17,32 +18,39 @@ class Article
      * @var int
      *
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
 
-
     /**
+     * @var string
+     *
      * @ORM\Column(type="string")
-     * @Assert\NotBlank()
+     * @Assert\NotBlank
      */
     private $title;
+
 
     /**
      * @var string
      *
-     * @Assert\NotBlank()
      * @ORM\Column(type="text")
+     * @Assert\NotBlank()
      */
     private $text;
 
     /**
      * @var Article
      *
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $image;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="article")
+     */
+    private $userLikes;
 
     /**
      * @var \DateTime
@@ -56,19 +64,20 @@ class Article
      * @var User
      *
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @ORM\JoinColumn(name="author_id", referencedColumnName="id")
+     * @ORM\JoinColumn(nullable=false)
      */
     private $author;
 
     /**
      * @var Comment[]|ArrayCollection
      *
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment",
-     *     mappedBy="article",
-     *     orphanRemoval=true,
-     *     cascade={"persist"}
+     * @ORM\OneToMany(
+     *      targetEntity="Comment",
+     *      mappedBy="article",
+     *      orphanRemoval=true,
+     *      cascade={"persist"}
      * )
-     *
+     * @ORM\OrderBy({"publishedAt": "DESC"})
      */
     private $comments;
 
@@ -76,19 +85,13 @@ class Article
      * @var Tag[]|ArrayCollection
      *
      * @ORM\ManyToMany(targetEntity="App\Entity\Tag", cascade={"persist"})
-     * @ORM\JoinTable(name="aricle_tag")
+     * @ORM\JoinTable(name="article_tag")
      * @ORM\OrderBy({"name": "ASC"})
      * @Assert\Count(max="4", maxMessage="article.too_many_tags")
      */
     private $tags;
 
-    /**
-     * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="article")
-     */
-    private $userLikes;
-
     public function __construct()
-
     {
         $this->publishedAt = new \DateTime();
         $this->comments = new ArrayCollection();
@@ -96,131 +99,74 @@ class Article
         $this->userLikes = new ArrayCollection();
     }
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getTitle()
+    public function getTitle(): ?string
     {
         return $this->title;
     }
 
-    /**
-     * @param string $title
-     * @return Article
-     */
-    public function setTitle($title): self
+    public function setTitle(?string $title)
     {
         $this->title = $title;
-
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $text
-     * @return  Article
-     */
-    public function setText(string $text): self
+    public function setText(?string $content)
     {
-        $this->text = $text;
-
+        $this->text = $content;
         return $this;
     }
 
-    /**
-     * @return ArrayCollection|Comment[]
-     */
-    public function getComments(): ArrayCollection
-    {
-        return $this->comments;
-    }
-
-    /**
-     * @param mixed $comments
-     * @return Article
-     */
-    public function setComments($comments): self
-    {
-        $this->comments = $comments;
-
-        return $this;
-    }
-
-    /**
-     * @return Tag[]|ArrayCollection
-     */
-    public function getTags()
-    {
-        return $this->tags;
-    }
-
-    /**
-     * @param Tag[]|ArrayCollection $tags
-     * @return Article
-     */
-    public function setTags($tags): self
-    {
-        $this->tags = $tags;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
     public function getPublishedAt(): \DateTime
     {
         return $this->publishedAt;
     }
 
-    /**
-     * @param \DateTime $publishedAt
-     * @return Article
-     */
-    public function setPublishedAt(\DateTime $publishedAt): self
+    public function setPublishedAt(?\DateTime $publishedAt)
     {
         $this->publishedAt = $publishedAt;
-
         return $this;
     }
 
-    /**
-     * Get user
-     *@return User
-     */
     public function getAuthor(): User
     {
         return $this->author;
     }
 
-    /**
-     * Set author
-     *
-     * @param User $author
-     *
-     * @return Article
-     */
-    public function setAuthor(?User $author): self
+    public function setAuthor(?User $author)
     {
         $this->author = $author;
-
         return $this;
     }
+
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(?Comment $comment): void
+    {
+        $comment->setArticle($this);
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+        }
+    }
+
+    public function removeComment(Comment $comment): void
+    {
+        $comment->setArticle(null);
+        $this->comments->removeElement($comment);
+    }
+
 
     public function addTag(?Tag ...$tags): void
     {
@@ -231,34 +177,24 @@ class Article
         }
     }
 
-    public function addComment(Comment $comment): self
+    public function removeTag(Tag $tag): void
     {
-        if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
-            $comment->setArticle($this);
-        }
-
-        return $this;
+        $this->tags->removeElement($tag);
     }
 
-    public function removeComment(Comment $comment): self
+    public function getTags(): Collection
     {
-        if ($this->comments->contains($comment)) {
-            $this->comments->removeElement($comment);
-            // set the owning side to null (unless already changed)
-            if ($comment->getArticle() === $this) {
-                $comment->setArticle(null);
-            }
-        }
-
-        return $this;
+        return $this->tags;
     }
 
-    public function removeTag(Tag $tag): self
+    public function getImage(): ?string
     {
-        if ($this->tags->contains($tag)) {
-            $this->tags->removeElement($tag);
-        }
+        return $this->image;
+    }
+
+    public function setImage(string $image)
+    {
+        $this->image = $image;
 
         return $this;
     }
@@ -290,19 +226,4 @@ class Article
         }
         return $this;
     }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(string $image): self
-    {
-        $this->image = $image;
-
-        return $this;
-    }
-
-
-
 }

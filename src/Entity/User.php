@@ -41,9 +41,8 @@ class User implements UserInterface
 
     public function __construct()
     {
-//        $this->roles = ['ROLE_USER'];
         $this->roles = ['ROLE_ADMIN'];
-//        $this->roles = ['ROLE_BLOGER'];
+        $this->roles = ['ROLE_BLOGER'];
         $this->roles = ['ROLE_READER'];
         $this->userLikes = new ArrayCollection();
     }
@@ -76,7 +75,6 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="user")
      */
     private $userLikes;
-
 
 
     /**
@@ -229,5 +227,6 @@ class User implements UserInterface
         }
         return $this;
     }
+
 
 }

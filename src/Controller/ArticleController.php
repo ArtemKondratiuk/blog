@@ -8,7 +8,6 @@ use App\Entity\Article;
 use App\Entity\UserLike;
 use App\Services\LikeServices;
 use App\Form\CommentType;
-use App\Repository\CommentRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -21,9 +20,10 @@ class ArticleController extends Controller
      */
     public function listArticle(Request $request)
     {
-        $articles = $this->getDoctrine()
-            ->getRepository(Article::class)
-            ->findAll();
+
+        $em = $this->getDoctrine()->getManager();
+        $articles = $em->getRepository(Article::class)
+            ->findLatest();
 
         $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
@@ -42,7 +42,7 @@ class ArticleController extends Controller
     /**
      * @Route("/article/{id}", name="article")
      */
-    public function showArticle(Request $request, Article $article, CommentRepository $commentRepository, LikeServices $likes)
+    public function showArticle(Request $request, Article $article, LikeServices $likes)
     {
 
         $allLike = $likes->countLikes($article);
@@ -54,15 +54,18 @@ class ArticleController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $comments->setAuthor($this->getUser());
             $em = $this->getDoctrine()->getManager();
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
             $em->persist($comments);
             $em->flush();
 
             return $this->redirectToRoute('article', ['id' => $article->getId()]);
         }
 
-        $comments = $commentRepository->findBy(['article' => $article]);
+        $em = $this->getDoctrine()->getManager();
+        $comments = $em->getRepository(Comment::class)
+            ->findBy(['article' => $article]);
+
 
         return $this->render('article.html.twig', [
                 'allLike' => $allLike,
@@ -77,7 +80,8 @@ class ArticleController extends Controller
      */
     public function LikeAction(Article $article)
     {
-        $user = $this->get('security.token_storage')->getToken()->getUser();
+//        $user = $this->get('security.token_storage')->getToken()->getUser();
+        $user = $this->getUser();
 
         $em = $this->getDoctrine()->getManager();
         $like = $em->getRepository(UserLike::class)
@@ -89,7 +93,6 @@ class ArticleController extends Controller
                 ->setArticle($article)
                 ->setUser($user)
                 ->setLikes(true);
-            $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
             $em->persist($like);
             $em->flush();
 

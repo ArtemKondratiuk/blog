@@ -21,6 +21,7 @@ class BloggerController extends Controller
     public function bloger(Request $request)
     {
         $article = new Article();
+        $article->setAuthor($this->getUser());
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 

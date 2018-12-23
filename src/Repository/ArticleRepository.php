@@ -19,6 +19,25 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
+    public function findLatest()
+    {
+         return $this->getEntityManager()
+            ->createQuery('
+                SELECT p, a, t
+                FROM App:Article p
+                JOIN p.author a
+                LEFT JOIN p.tags t
+                WHERE p.publishedAt <= :now
+                ORDER BY p.publishedAt DESC
+            ')
+            ->setParameter('now', new \DateTime())
+        ;
+
+
+    }
+
+
+
 
     // /**
     //  * @return Article[] Returns an array of Article objects

@@ -37,7 +37,7 @@
                 <div class="comment">
                 {% for comment in comments %}
                    <span class="username"> {{ comment.author.firstname }} </span>
-                   <span> {{ article.publishedAt|date('d/m/Y, h:iA') }} </span>
+                   <span> {{ comment.publishedAt|date('d/m/Y, h:iA') }} </span>
                     <p class="comment-text">{{ comment.text }}</p>
                 {% endfor %}
 

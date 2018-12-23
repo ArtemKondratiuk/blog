@@ -1,12 +1,12 @@
 <?php
 
+
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  * @ORM\Entity
  * @ORM\Table(name="comment")
  */
@@ -16,28 +16,39 @@ class Comment
      * @var int
      *
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
+     * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      */
     private $id;
 
     /**
-     * @ORM\Column(type="text")
-     */
-    private $text;
-
-    /**
+     * @var Article
+     *
      * @ORM\ManyToOne(targetEntity="App\Entity\Article", inversedBy="comments")
      * @ORM\JoinColumn(nullable=false)
      */
     private $article;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="text")
+     * @Assert\NotBlank(message="comment.blank")
+     * @Assert\Length(
+     *     min=5,
+     *     minMessage="comment.too_short",
+     *     max=10000,
+     *     maxMessage="comment.too_long"
+     * )
+     */
+
+    private $text;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(type="datetime")
-     * @Assert\Type("\DateTime")
-     * @Assert\NotBlank()
+     * @Assert\DateTime
      */
     private $publishedAt;
 
@@ -55,93 +66,61 @@ class Comment
     }
 
     /**
-     * @return int
+     * @Assert\IsTrue(message="comment.is_spam")
      */
-    public function getId()
+    public function isLegitComment(): bool
+    {
+        $containsInvalidCharacters = false !== mb_strpos($this->text, '@');
+
+        return !$containsInvalidCharacters;
+    }
+
+    public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return string
-     */
-    public function getText()
+    public function getText(): ?string
     {
         return $this->text;
     }
 
-    /**
-     * @param string $text
-     * @return Comment
-     */
-    public function setText($text): self
+    public function setText(string $content)
     {
-        $this->text = $text;
-
+        $this->text = $content;
         return $this;
     }
 
-    /**
-     * @return mixed
-     */
-    public function getArticle()
-    {
-        return $this->article;
-    }
-
-    /**
-     * @param mixed $article
-     * @return Comment
-     */
-    public function setArticle(?Article $article): self
-    {
-        $this->article = $article;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
     public function getPublishedAt(): \DateTime
     {
         return $this->publishedAt;
     }
 
-    /**
-     * @param \DateTime $publishedAt
-     * @return Comment
-     */
-    public function setPublishedAt(\DateTime $publishedAt): self
+    public function setPublishedAt(\DateTime $publishedAt)
     {
         $this->publishedAt = $publishedAt;
-
         return $this;
     }
 
-    /**
-     * Get user
-     * @return User
-     */
     public function getAuthor(): User
     {
         return $this->author;
     }
 
-    /**
-     * Set author
-     *
-     * @param User $author
-     *
-     * @return Comment
-     */
-    public function setAuthor(?User $author): self
+    public function setAuthor(User $author)
     {
         $this->author = $author;
-
         return $this;
     }
 
+    public function getArticle(): ?Article
+    {
+        return $this->article;
+    }
 
-
+    public function setArticle(?Article $post)
+    {
+        $this->article = $post;
+        return $this;
+    }
 }
