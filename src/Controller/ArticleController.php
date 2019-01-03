@@ -102,4 +102,14 @@ class ArticleController extends Controller
 
     }
 
+    /**
+     * @Route("/tag", name="tag")
+     */
+    public function TagAction()
+    {
+
+
+        return $this->render('tag.html.twig');
+    }
+
 }
