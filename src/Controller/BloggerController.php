@@ -5,7 +5,9 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use App\Form\ArticleType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use App\Entity\Article;
+use App\Entity\Image;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 
@@ -27,15 +29,38 @@ class BloggerController extends Controller
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $em->persist($article);
-            $em->flush();
+            $files = $request->files->get('article')['images'];
+            /** @var UploadedFile $file */
 
-            return $this->redirectToRoute('bloger');
+            foreach ($files as $file) {
+                $image = new Image();
+
+                $fileName = md5(uniqid()) . $file->guessExtension();
+                $image->setFileName($fileName);
+
+                $image->setPath(
+                    '/build/images/' . $fileName
+                );
+
+                $file->move(
+                    $this->getParameter('image_directory'),
+                    $fileName
+                );
+
+                $image->setArticle($article);
+                $article->addImage($image);
+
+                $em->persist($image);
+                $em->persist($article);
+                $em->flush();
+
+                return $this->redirectToRoute('bloger');
+            }
+
         }
-
         return $this->render('bloger/bloger.html.twig', [
             'article' => $article,
             'form' => $form->createView(),
-            ]);
+        ]);
     }
 }
