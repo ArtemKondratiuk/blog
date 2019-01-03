@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hi admin!{% endblock %}
+    {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" type="text/css" href="{{ asset('build/css/admin/index.css') }}" />
+    {% endblock %}
+
+{% block body %}
+    <h1>Hi admin!</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Show</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for article in pagination %}
+            <tr>
+                <td>{{ article.id }}</td>
+                <td>{{ article.title[:200] }}</td>
+                <td class="show"> <a href="{{ path('article_show', {'id': article.id}) }}">show</a> </td>
+                <td class="edit"> <a href="{{ path('article_edit', {'id': article.id}) }}">edit</a> </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="new" href="{{ path('article_new') }}">Create new</a>
+
+    <div class="navigation pager clearfix">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+{% endblock %}

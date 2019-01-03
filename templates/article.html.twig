@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Article{% endblock %}
+
+    {% block stylesheets %}
+        {{ parent() }}
+        <link rel="stylesheet" type="text/css" href="{{ asset('build/css/article.css') }}" />
+    {% endblock %}
+
+{% block body %}
+    {% block header %}
+        {{ parent() }}
+    {% endblock header %}
+{% block main_content %}
+  <div class="center-block-main content">
+        <main>
+            <article>
+                <header>
+                    {% for image in article.images %}
+                        <img src="{{ asset(image.path) }}" alt="">
+                    {% endfor %}
+                    <p class="publish">Posted by <span class="highlight">{{article.author.firstname}}</span> at {{ article.publishedAt|date('l, F j, Y, h:iA') }}
+                </header>
+                <h2>{{ article.title }}</h2>
+                <p>{{ article.text }}</p>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <p><a class="button like" href="{{ path('like', { 'id':article.id }) }}"> ❤  {{ allLike }} </a></p>
+                {% else %}
+                    <p><a class="button like"> ❤  {{ allLike }} </a>
+                        Please <a href="{{ path('app_login') }}">Login</a></p>
+                {% endif %}
+                {% if not article.tags.empty %}
+                    {% for tag in article.tags %}
+                        <ul class="tag">
+                            <li><a class="tag" href="#"> {{ tag.name }} </a></li>
+                        </ul>
+                    {% endfor %}
+                {% endif %}
+                <div class="comment">
+                {% for comment in comments %}
+                   <span class="username"> {{ comment.author.firstname }} </span>
+                   <span> {{ comment.publishedAt|date('d/m/Y, h:iA') }} </span>
+                    <p class="comment-text">{{ comment.text }}</p>
+                {% endfor %}
+
+                {{ form_start(form, {attr: {class: 'form-comment'} }) }}
+                {{ form_row(form.text) }}
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <button type="submit">Submit!</button>
+                    {% else %}
+                        Please <a href="{{ path('app_login') }}">Login</a> for commenting
+                    {% endif %}
+                {{ form_end(form) }}
+                </div>
+            </article>
+        </main>
+        {% block aside %}
+            {{ parent() }}
+        {% endblock aside %}
+    <div class="clearfix">
+
+    </div>
+    {% endblock %}
+  </div>
+{% endblock %}

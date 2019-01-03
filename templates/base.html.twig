@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
-    {% block stylesheets %}{% endblock %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block stylesheets %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('build/css/base.css') }}" />
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600' rel='stylesheet' type='text/css'>
+    {% endblock %}
 </head>
 <body>
 {% block body %}
@@ -11,23 +15,88 @@
         <header>
             <div class="center-block-main">
                 <nav>
+                    <a href="{{ path('homepage') }}"><img src="{{ asset('build/images/logo.png') }}" alt="" class="logo"></a>
                     <ul class="menu">
+                        <li><a href="{{ path('homepage') }}">Home</a></li>
                         <li><a href="{{ path('app_login') }}">Login</a></li>
-                        <li><a href="{{ path('app_logout') }}">Log out</a></li>
+                        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                            <li><a href="{{ path('app_logout') }}">Logout</a></li>
+                        {% endif %}
                         <li><a href="{{ path('app_user_register') }}">Registration</a></li>
                     </ul>
                 </nav>
             </div>
         </header>
     {% endblock header %}
-    {% block main_content %}
-        <ul>
-            {% for article in articles %}
-                <li>{{ article.text | title}}</li>
-            {% endfor %}
-        </ul>
+        <div class="center-block-main content">
+            {% block main_content %}
+                <main>
+                    {% for article in  pagination %}
+                        <article>
+                            <header>
+                                {% for image in article.images %}
+                                    <img src="{{ asset(image.path) }}" alt="">
+                                {% endfor %}
+                                <p class="publish">Posted by <span class="highlight">{{article.author.firstname}}</span> at {{ article.publishedAt|date('l, F j, Y, h:iA') }}
+                            </header>
+                            <h2>{{ article.title[:50] }}</h2>
+                            <p>{{ article.text[:500] ~ '...' }}</p>
+                            <p><a class="more" href="{{ path('article', { 'id': article.id }) }}">read more...</a></p>
+                        </article>
+                    {% endfor %}
+                </main>
+                {% block aside %}
+                <aside>
+                    <div class="widget">
+                        <h2>Search</h2>
+                        <form action="" method="get">
+                            <input type="search" class="search" placeholder="What are you looking for?">
+                        </form>
+                    </div>
+
+                    <div class="widget">
+                        <h2>categories</h2>
+                        <nav>
+                            <ul>
+                                <li><a href="#">Some categories</a></li>
+                                <li><a href="#">Some categories</a></li>
+                                <li><a href="#">Some categories</a></li>
+                                <li><a href="#">Some categories</a></li>
+                            </ul>
+                        </nav>
+                    </div>
+
+                    <div class="widget">
+                        <h2>Stay Tuned</h2>
+
+                        <div class="subsrcibe">
+                            <form action="" method="get">
+                                <input type="email" placeholder="Your Email" class="subsribe-input">
+                                {#<input type="image" src="images/sbcr-btn.jpg" class="subsribe-img">#}
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="widget">
+                        {#<img src="images/banner.jpg" alt="">#}
+                    </div>
+                </aside>
+                {% endblock aside %}
+                <div class="clr"></div>
+                    <div class="navigation pager clearfix">
+                        {{ knp_pagination_render(pagination) }}
+                    </div>
+        </div>
+        {% endblock %}
     {% endblock %}
-{% endblock %}
+    {% block footer %}
+        <footer>
+            <div class="center-block-main">
+                {#<a href="/"><img src="images/logo-ftr.jpg" alt=""></a>#}
+                <p>&copy; 2018 Lectorium </p>
+            </div>
+        </footer>
+    {% endblock footer %}
 {% block javascripts %}{% endblock %}
 </body>
 </html>

@@ -2,16 +2,21 @@
 
 namespace App\Entity;
 
+
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
+ * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  * @ORM\Entity
- * @ORM\Table(name="user")
+ * @ORM\Table(name="users")
+ *
  * @UniqueEntity("email", message="Email already taken")
  */
+//@ORM\EntityListeners({"App\EntityListener\UserListener"})
 class User implements UserInterface
 {
     /**
@@ -33,9 +38,13 @@ class User implements UserInterface
      */
     private $roles = [];
 
+
     public function __construct()
     {
-        $this->roles = ['ROLE_USER'];
+        $this->roles = ['ROLE_ADMIN'];
+        $this->roles = ['ROLE_BLOGER'];
+        $this->roles = ['ROLE_READER'];
+        $this->userLikes = new ArrayCollection();
     }
 
     /**
@@ -61,6 +70,12 @@ class User implements UserInterface
      * )
      */
     private $password;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="user")
+     */
+    private $userLikes;
+
 
     /**
      * @return int
@@ -185,5 +200,33 @@ class User implements UserInterface
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
+
+    /**
+     * @return ArrayCollection|UserLike[]
+     */
+    public function getUserLike(): ArrayCollection
+    {
+        return $this->userLikes;
+    }
+    public function addUserLike(UserLike $likes): self
+    {
+        if (!$this->userLikes->contains($likes)) {
+            $this->userLikes[] = $likes;
+            $likes->setUser($this);
+        }
+        return $this;
+    }
+    public function removeUserLike(UserLike $likes): self
+    {
+        if ($this->userLikes->contains($likes)) {
+            $this->userLikes->removeElement($likes);
+            // set the owning side to null (unless already changed)
+            if ($likes->getUser() === $this) {
+                $likes->setUser(null);
+            }
+        }
+        return $this;
+    }
+
 
 }
