@@ -41,7 +41,7 @@ class Article
     private $text;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="article")
+     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="article", cascade={"remove"})
      */
     private $images;
 
