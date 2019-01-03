@@ -46,7 +46,7 @@ class Article
     private $images;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="article")
+     * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="article", cascade={"remove"})
      */
     private $userLikes;
 
@@ -73,7 +73,8 @@ class Article
      *      targetEntity="Comment",
      *      mappedBy="article",
      *      orphanRemoval=true,
-     *      cascade={"persist"}
+     *      cascade={"persist"},
+     *      cascade={"remove"}
      * )
      * @ORM\OrderBy({"publishedAt": "DESC"})
      */
