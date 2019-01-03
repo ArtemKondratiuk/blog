@@ -56,13 +56,13 @@ class AppFixtures extends Fixture
 
         for($i=0; $i<20; $i++) {
             $article =new Article();
-//            $images = new Image();
-//            $images->setFileName('symfony4.png');
-//            $images->setPath('build/images');
-//            $images->setArticle($article);
-//            $manager->persist($images);
+            $images = new Image();
+            $images->setFileName(('symfony4.png'));
+            $images->setPath('/build/images/symfony4.png');
+            $images->setArticle($article);
+            $manager->persist($images);
             $article->setTitle('A day with Symfony4 №' . $i);
-//            $article->setImages($images);
+//            $article->addImage($images);
             $article->setText('Lorem ipsum dolor sit amet, consectetur adipiscing eletra electrify 
             denim vel ports.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ut velocity magna. 
             Etiam vehicula nunc non leo hendrerit commodo. Vestibulum vulputate mauris eget erat congue dapibus 
