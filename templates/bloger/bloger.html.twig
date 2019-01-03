@@ -6,11 +6,9 @@
     <h1>Hi Bloger!</h1>
     <h3>Create new Article</h3>
 
-    {{ form_start(form) }}
-    {{ form_row(form.title) }}
-    {{ form_row(form.text) }}
-
-    <button type="submit">Save</button>
-    {{ form_end(form) }}
+{{ form_start(form)  }}
+    {{ form_widget(form) }}
+<button class="btn" >{{ button_label|default('Save') }}</button>
+{{ form_end(form) }}
 
 {% endblock %}

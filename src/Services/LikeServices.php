@@ -20,4 +20,24 @@ class LikeServices
         return $allLikes;
     }
 
+//    public function LikeOn(UserLike $like, Article $article, User $user, EntityManager $em)
+//    {
+//        if (!$like) {
+//            $like = new UserLike();
+//            $like
+//                ->setArticle($article)
+//                ->setUser($user)
+//                ->setLikes(true);
+//            $em->persist($like);
+//            $em->flush();
+//
+//        } else {
+//            $em->remove($like);
+//            $em->flush();
+//        }
+//
+//        return $like;
+//    }
+
+
 }

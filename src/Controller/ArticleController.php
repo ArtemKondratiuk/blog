@@ -8,6 +8,7 @@ use App\Entity\Article;
 use App\Entity\UserLike;
 use App\Services\LikeServices;
 use App\Form\CommentType;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -18,14 +19,12 @@ class ArticleController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function listArticle(Request $request)
+    public function listArticle(Request $request, PaginatorInterface $paginator)
     {
-
         $em = $this->getDoctrine()->getManager();
         $articles = $em->getRepository(Article::class)
             ->findLatest();
 
-        $paginator  = $this->get('knp_paginator');
         $pagination = $paginator->paginate(
             $articles, /* query NOT result */
             $request->query->getInt('page', 1)/*page number*/,
@@ -33,7 +32,6 @@ class ArticleController extends Controller
         );
 
         return $this->render('base.html.twig', [
-            'articles' => $articles,
             'pagination' => $pagination
         ]);
 
@@ -44,7 +42,6 @@ class ArticleController extends Controller
      */
     public function showArticle(Request $request, Article $article, LikeServices $likes)
     {
-
         $allLike = $likes->countLikes($article);
 
         $comments = new Comment();
@@ -80,12 +77,12 @@ class ArticleController extends Controller
      */
     public function LikeAction(Article $article)
     {
-//        $user = $this->get('security.token_storage')->getToken()->getUser();
         $user = $this->getUser();
 
         $em = $this->getDoctrine()->getManager();
         $like = $em->getRepository(UserLike::class)
             ->findOneBy(['user' => $user, 'article' => $article]);
+
 
         if (!$like) {
             $like = new UserLike();

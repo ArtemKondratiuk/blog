@@ -3,13 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Image;
 use App\Form\ArticleType;
-use App\Repository\ArticleRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Knp\Component\Pager\PaginatorInterface;
 
 /**
  * @Route("/admin")
@@ -20,9 +22,22 @@ class AdminController extends AbstractController
     /**
      * @Route("/", name="article_index", methods="GET")
      */
-    public function index(ArticleRepository $articleRepository): Response
+    public function index(Request $request, PaginatorInterface $paginator): Response
     {
-        return $this->render('admin/index.html.twig', ['articles' => $articleRepository->findAll()]);
+
+        $em = $this->getDoctrine()->getManager();
+        $articles = $em->getRepository(Article::class)
+            ->findLatest();
+
+        $pagination = $paginator->paginate(
+            $articles, /* query NOT result */
+            $request->query->getInt('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+
+        return $this->render('admin/index.html.twig', [
+            'pagination' => $pagination
+        ]);
     }
 
     /**
@@ -37,6 +52,29 @@ class AdminController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
+            $files = $request->files->get('article')['images'];
+            /** @var UploadedFile $file */
+
+            foreach ($files as $file){
+                $image = new Image();
+
+                $fileName = md5(uniqid()) . $file->guessExtension();
+                $image->setFileName($fileName);
+
+                $image->setPath(
+                    '/build/images/' . $fileName
+                );
+
+                $file->move(
+                    $this->getParameter('image_directory'),
+                    $fileName
+                );
+
+                $image->setArticle($article);
+                $article->addImage($image);
+
+                $em->persist($image);
+            }
             $em->persist($article);
             $em->flush();
 

@@ -41,11 +41,9 @@ class Article
     private $text;
 
     /**
-     * @var Article
-     *
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToMany(targetEntity="App\Entity\Image", mappedBy="article")
      */
-    private $image;
+    private $images;
 
     /**
      * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="article")
@@ -97,6 +95,7 @@ class Article
         $this->comments = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->userLikes = new ArrayCollection();
+        $this->images = new ArrayCollection();
     }
 
     public function getId(): int
@@ -187,14 +186,33 @@ class Article
         return $this->tags;
     }
 
-    public function getImage(): ?string
+    /**
+     * @return Collection|Image[]
+     */
+    public function getImages(): Collection
     {
-        return $this->image;
+        return $this->images;
     }
 
-    public function setImage(string $image)
+    public function addImage(Image $image): self
     {
-        $this->image = $image;
+        if (!$this->images->contains($image)) {
+            $this->images[] = $image;
+            $image->setArticle($this);
+        }
+
+        return $this;
+    }
+
+    public function removeImage(Image $image): self
+    {
+        if ($this->images->contains($image)) {
+            $this->images->removeElement($image);
+            // set the owning side to null (unless already changed)
+            if ($image->getArticle() === $this) {
+                $image->setArticle(null);
+            }
+        }
 
         return $this;
     }

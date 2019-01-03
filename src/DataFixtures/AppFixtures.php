@@ -3,6 +3,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Image;
 use App\Entity\User;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -55,8 +56,13 @@ class AppFixtures extends Fixture
 
         for($i=0; $i<20; $i++) {
             $article =new Article();
+//            $images = new Image();
+//            $images->setFileName('symfony4.png');
+//            $images->setPath('build/images');
+//            $images->setArticle($article);
+//            $manager->persist($images);
             $article->setTitle('A day with Symfony4 №' . $i);
-            $article->setImage('symfony4.png');
+//            $article->setImages($images);
             $article->setText('Lorem ipsum dolor sit amet, consectetur adipiscing eletra electrify 
             denim vel ports.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ut velocity magna. 
             Etiam vehicula nunc non leo hendrerit commodo. Vestibulum vulputate mauris eget erat congue dapibus 
