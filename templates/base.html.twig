@@ -1,12 +1,33 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        {% block stylesheets %}{% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-        {% block javascripts %}{% endblock %}
-    </body>
+<html lang="us">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    {% block stylesheets %}{% endblock %}
+</head>
+<body>
+{% block body %}
+    {% block header %}
+        <header>
+            <div class="center-block-main">
+                <nav>
+                    <ul class="menu">
+                        <li><a href="{{ path('app_login') }}">Login</a></li>
+                        <li><a href="{{ path('app_logout') }}">Log out</a></li>
+                        <li><a href="{{ path('app_user_register') }}">Registration</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </header>
+    {% endblock header %}
+    {% block main_content %}
+        <ul>
+            {% for article in articles %}
+                <li>{{ article.text | title}}</li>
+            {% endfor %}
+        </ul>
+    {% endblock %}
+{% endblock %}
+{% block javascripts %}{% endblock %}
+</body>
 </html>
