@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hi admin!{% endblock %}
+    {% block stylesheets %}
+
+    {% endblock %}
+
+{% block body %}
+    {% block aside %}
+    <ul>
+        <li><a href="{{ path('dashboard') }}">Dashboard</a></li>
+        <li><a href="{{ path('article_index') }}">Article Manager</a></li>
+        <li><a href="{{ path('user_index') }}">User Manager</a></li>
+        {#<li><a href="{{ path('') }}"></a></li>#}
+    </ul>
+    {% endblock %}
+{% endblock %}

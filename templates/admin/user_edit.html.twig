@@ -1,0 +1,29 @@
+{% extends 'admin/dashboard.html.twig' %}
+
+{% block title %}Hi admin!{% endblock %}
+    {% block stylesheets %}
+            {{ parent() }}
+            <link rel="stylesheet" type="text/css" href="{{ asset('build/css/admin/index.css') }}" />
+    {% endblock %}
+
+{% block body %}
+
+        {% block aside %}
+                {{ parent() }}
+        {% endblock %}
+
+        <table class="table">
+                <thead>
+                <tr>
+                        <th>Edit</th>
+                </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                                <td>{{ form(form) }}</td>
+                        </tr>
+                </tbody>
+        </table>
+{% endblock %}
+
+

@@ -4,25 +4,35 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Entity\Image;
+use App\Entity\User;
 use App\Form\ArticleType;
+use App\Form\UserEditType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Knp\Component\Pager\PaginatorInterface;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/admin")
- * @Security("has_role('ROLE_ADMIN')")
  */
 class AdminController extends AbstractController
 {
+
     /**
-     * @Route("/", name="article_index", methods="GET")
+     * @Route("/", name="dashboard", methods="GET")
      */
-    public function index(Request $request, PaginatorInterface $paginator): Response
+    public function dashboard()
+    {
+        return $this->render('admin/dashboard.html.twig');
+    }
+
+    /**
+     * @Route("/all-articles", name="article_index", methods="GET")
+     */
+    public function articleManager(Request $request, PaginatorInterface $paginator): Response
     {
 
         $em = $this->getDoctrine()->getManager();
@@ -35,10 +45,55 @@ class AdminController extends AbstractController
             10/*limit per page*/
         );
 
-        return $this->render('admin/index.html.twig', [
+        return $this->render('admin/article.html.twig', [
             'pagination' => $pagination
         ]);
     }
+
+    /**
+     * @Route("/all-user", name="user_index", methods="GET")
+     */
+    public function userManager(Request $request, PaginatorInterface $paginator): Response
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $user = $em->getRepository(User::class)
+            ->findAll();
+
+        $pagination = $paginator->paginate(
+            $user, /* query NOT result */
+            $request->query->getInt('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+
+        return $this->render('admin/user.html.twig', [
+            'pagination' => $pagination,
+        ]);
+    }
+
+    /**
+     * @Route("/user-edit/{id}", name="user-edit")
+     */
+    public function editUser(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder)
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $form = $this->createForm(UserEditType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $password = $passwordEncoder->encodePassword($user, $user->getPassword());
+            $user->setPassword($password);
+            $em->persist($user);
+            $em->flush();
+        }
+
+        return $this->render('admin/user_edit.html.twig', [
+            'user' => $user,
+            'form' => $form->createView()
+        ]);
+    }
+
 
     /**
      * @Route("/new", name="article_new", methods="GET|POST")
@@ -128,4 +183,5 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('article_index');
     }
+
 }
