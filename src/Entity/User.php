@@ -41,8 +41,6 @@ class User implements UserInterface
 
     public function __construct()
     {
-        $this->roles = ['ROLE_ADMIN'];
-        $this->roles = ['ROLE_BLOGER'];
         $this->roles = ['ROLE_READER'];
         $this->userLikes = new ArrayCollection();
     }
@@ -66,7 +64,8 @@ class User implements UserInterface
      *     min = 6,
      *     max = 20,
      *     minMessage = "Your password must be at least {{ limit }} characters long",
-     *     maxMessage = "Your password cannot be longer than {{ limit }} characters"
+     *     maxMessage = "Your password cannot be longer than {{ limit }} characters",
+     *     groups = {"Default"}
      * )
      */
     private $password;
