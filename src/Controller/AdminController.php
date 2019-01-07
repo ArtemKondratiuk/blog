@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
-use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 /**
  * @Route("/admin")
@@ -74,7 +73,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/user-edit/{id}", name="user-edit")
      */
-    public function editUser(Request $request, User $user, UserPasswordEncoderInterface $passwordEncoder)
+    public function editUser(Request $request, User $user)
     {
 
         $em = $this->getDoctrine()->getManager();
@@ -82,8 +81,6 @@ class AdminController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $password = $passwordEncoder->encodePassword($user, $user->getPassword());
-            $user->setPassword($password);
             $em->persist($user);
             $em->flush();
         }

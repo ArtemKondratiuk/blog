@@ -19,7 +19,9 @@ class ArticleType extends AbstractType
         $builder
             ->add('title', TextareaType::class)
             ->add('text', TextareaType::class)
-            ->add('tags', TagsInputType::class)
+            ->add('tags', TagsInputType::class,[
+                'required' => false,
+            ])
             ->add('images', FileType::class, [
                 'multiple' => true,
                 'mapped' => false

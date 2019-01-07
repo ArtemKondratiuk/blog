@@ -83,12 +83,13 @@ class Article
     /**
      * @var Tag[]|ArrayCollection
      *
-     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", cascade={"persist"})
+     * @ORM\ManyToMany(targetEntity="App\Entity\Tag", inversedBy="article", cascade={"persist"})
      * @ORM\JoinTable(name="article_tag")
      * @ORM\OrderBy({"name": "ASC"})
      * @Assert\Count(max="4", maxMessage="article.too_many_tags")
      */
     private $tags;
+
 
     public function __construct()
     {

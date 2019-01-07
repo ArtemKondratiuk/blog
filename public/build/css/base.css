@@ -64,9 +64,14 @@ body {
     min-height:100%;
     font-family: 'Open Sans', sans-serif;
 }
+
+p a{
+    text-decoration: none;
+}
+
 a, a:visited {
     color: #1E9C79;
-    text-decoration: underline;
+    text-decoration: none;
 }
 a:hover {
     color: #1E9C79;
@@ -137,7 +142,7 @@ article>header{
 article>header:hover .publish{
     bottom:0;
 }
-article>h2{
+article>a>h2{
     font-size:1.75em; text-transform:uppercase; font-weight:600; line-height:1.1; margin:0 0 40px 20px; color:#4f4e4e;
 }
 article>p{

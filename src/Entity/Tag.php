@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\TagRepository")
  * @ORM\Entity()
  * @ORM\Table(name="tag")
  */
@@ -28,15 +26,31 @@ class Tag
      */
     private $name;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Article", mappedBy="tags")
+     */
+    private $article;
+
     public function getId(): int
     {
         return $this->id;
     }
 
+    public function getArticle()
+    {
+        return $this->article;
+    }
+
+    public function setArticle($article): self
+    {
+        $this->article = $article;
+        return $this;
+
+    }
+
     public function setName(string $name): self
     {
         $this->name = $name;
-
         return $this;
     }
 
@@ -44,7 +58,6 @@ class Tag
     {
         return $this->name;
     }
-
 
     public function __toString(): string
     {

@@ -5,6 +5,7 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Article;
+use App\Repository\TagRepository;
 use App\Entity\UserLike;
 use App\Services\LikeServices;
 use App\Form\CommentType;
@@ -19,11 +20,17 @@ class ArticleController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function listArticle(Request $request, PaginatorInterface $paginator)
+    public function listArticle(Request $request, PaginatorInterface $paginator, TagRepository $tags)
     {
         $em = $this->getDoctrine()->getManager();
+
+        $tag = null;
+        if ($request->query->has('tag')) {
+            $tag = $tags->findOneBy(['name' => $request->query->get('tag')]);
+        }
+
         $articles = $em->getRepository(Article::class)
-            ->findLatest();
+            ->findLatest($tag);
 
         $pagination = $paginator->paginate(
             $articles, /* query NOT result */
@@ -100,16 +107,6 @@ class ArticleController extends Controller
 
         return $this->redirectToRoute('article', ['id' => $article->getId()]);
 
-    }
-
-    /**
-     * @Route("/tag", name="tag")
-     */
-    public function TagAction()
-    {
-
-
-        return $this->render('tag.html.twig');
     }
 
 }

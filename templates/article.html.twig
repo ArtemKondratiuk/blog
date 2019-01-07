@@ -29,13 +29,7 @@
                     <p><a class="button like"> ❤  {{ allLike }} </a>
                         Please <a href="{{ path('app_login') }}">Login</a></p>
                 {% endif %}
-                {% if not article.tags.empty %}
-                    {% for tag in article.tags %}
-                        <ul class="tag">
-                            <li><a class="tag" href="{{ path('tag') }}"> {{ tag.name }} </a></li>
-                        </ul>
-                    {% endfor %}
-                {% endif %}
+                <p>{{ include('article_tags.html.twig') }}</p>
                 <div class="comment">
                 {% for comment in comments %}
                    <span class="username"> {{ comment.author.firstname }} </span>

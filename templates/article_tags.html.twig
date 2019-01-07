@@ -1,0 +1,11 @@
+{% if not article.tags.empty %}
+    <p>
+        {% for tag in article.tags %}
+            <a href="{{ path('homepage', {'tag': tag.name == app.request.query.get('tag') ? null : tag.name}) }}"
+               class="label label-{{ tag.name == app.request.query.get('tag') ? 'success' : 'default' }}"
+            >
+                <i></i> {{ tag.name }}
+            </a>
+        {% endfor %}
+    </p>
+{% endif %}

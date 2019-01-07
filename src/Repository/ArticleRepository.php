@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Article;
+use App\Entity\Tag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -19,52 +20,68 @@ class ArticleRepository extends ServiceEntityRepository
         parent::__construct($registry, Article::class);
     }
 
-    public function findLatest()
+    public function findLatest(Tag $tag = null)
     {
-         return $this->getEntityManager()
-            ->createQuery('
-                SELECT p, a, t
-                FROM App:Article p
-                JOIN p.author a
-                LEFT JOIN p.tags t
-                WHERE p.publishedAt <= :now
-                ORDER BY p.publishedAt DESC
-            ')
-            ->setParameter('now', new \DateTime())
-        ;
+          $qb = $this->createQueryBuilder('p')
+             ->addSelect('a', 't')
+             ->innerJoin('p.author', 'a')
+             ->leftJoin('p.tags', 't')
+             ->where('p.publishedAt <= :now')
+             ->orderBy('p.publishedAt', 'DESC')
+             ->setParameter('now', new \DateTime());
 
+        if (null !== $tag) {
+            $qb->andWhere(':tag MEMBER OF p.tags')
+                ->setParameter('tag', $tag);
+        }
 
+        return $qb;
     }
 
-
-
-
-    // /**
-    //  * @return Article[] Returns an array of Article objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @return Article[]
+     */
+    public function findBySearchQuery(string $rawQuery): array
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
+        $query = $this->sanitizeSearchQuery($rawQuery);
+        $searchTerms = $this->extractSearchTerms($query);
+
+        if (0 === \count($searchTerms)) {
+            return [];
+        }
+
+        $queryBuilder = $this->createQueryBuilder('p');
+
+        foreach ($searchTerms as $key => $term) {
+            $queryBuilder
+                ->orWhere('p.title LIKE :t_'.$key)
+                ->setParameter('t_'.$key, '%'.$term.'%')
+            ;
+        }
+
+        return $queryBuilder
+            ->orderBy('p.publishedAt', 'DESC')
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
 
-    /*
-    public function findOneBySomeField($value): ?Article
+    /**
+     * Removes all non-alphanumeric characters except whitespaces.
+     */
+    private function sanitizeSearchQuery(string $query): string
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
+        return trim(preg_replace('/[[:space:]]+/', ' ', $query));
     }
-    */
+
+    /**
+     * Splits the search query into terms and removes the ones which are irrelevant.
+     */
+    private function extractSearchTerms(string $searchQuery): array
+    {
+        $terms = array_unique(explode(' ', $searchQuery));
+
+        return array_filter($terms, function ($term) {
+            return 2 <= mb_strlen($term);
+        });
+    }
 }
