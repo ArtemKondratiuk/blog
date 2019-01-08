@@ -8,6 +8,12 @@ parameters:
     image_directory: '%kernel.project_dir%/public/build/images'
 
 services:
+    App\Services\ImageUploader:
+        arguments:
+            $targetDirectory: '%image_directory%'
+
+    App\Services\LikeServices:
+        autowire: true
 #    app.doctrine.hash_password_listener:
 #        class: App\EventListener\HashPasswordListener
 #        autowire: true
@@ -29,7 +35,7 @@ services:
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php,Services}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class

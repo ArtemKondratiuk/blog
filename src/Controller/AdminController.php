@@ -8,7 +8,7 @@ use App\Entity\User;
 use App\Form\ArticleType;
 use App\Form\UserEditType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Services\ImageUploader;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -95,9 +95,10 @@ class AdminController extends AbstractController
     /**
      * @Route("/new", name="article_new", methods="GET|POST")
      */
-    public function new(Request $request): Response
+    public function new(Request $request, ImageUploader $imageUploader): Response
     {
         $article = new Article();
+        $image = new Image();
         $article->setAuthor($this->getUser());
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
@@ -105,28 +106,16 @@ class AdminController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $files = $request->files->get('article')['images'];
-            /** @var UploadedFile $file */
-
-            foreach ($files as $file){
-                $image = new Image();
-
-                $fileName = md5(uniqid()) . $file->guessExtension();
+            foreach ($files as $file) {
+                $fileName = $imageUploader->upload($file);
                 $image->setFileName($fileName);
-
-                $image->setPath(
-                    '/build/images/' . $fileName
-                );
-
-                $file->move(
-                    $this->getParameter('image_directory'),
-                    $fileName
-                );
-
-                $image->setArticle($article);
-                $article->addImage($image);
-
-                $em->persist($image);
+                $image->setPath('/build/images/' . $fileName);
             }
+
+            $image->setArticle($article);
+            $article->addImage($image);
+
+            $em->persist($image);
             $em->persist($article);
             $em->flush();
 
@@ -134,7 +123,6 @@ class AdminController extends AbstractController
         }
 
         return $this->render('admin/new.html.twig', [
-            'article' => $article,
             'form' => $form->createView(),
         ]);
     }

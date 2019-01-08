@@ -31,3 +31,12 @@ p a{
     margin:0 0 20px 0;
     font-style: italic;
 }
+
+article>h2 {
+    font-size: 1.75em;
+    text-transform: uppercase;
+    font-weight: 600;
+    line-height: 1.1;
+    margin: 0 0 40px 20px;
+    color: #4f4e4e;
+}
