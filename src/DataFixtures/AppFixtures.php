@@ -79,7 +79,7 @@ class AppFixtures extends Fixture
             $tag->setName('some tag'.$i);
             $manager->persist($tag);
             $article->addTag($tag);
-
+            $article->setPublish(true);
 
             $manager->persist($article);
 

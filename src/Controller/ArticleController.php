@@ -22,13 +22,13 @@ class ArticleController extends Controller
      */
     public function listArticle(Request $request, PaginatorInterface $paginator, TagRepository $tags)
     {
-        $em = $this->getDoctrine()->getManager();
 
         $tag = null;
         if ($request->query->has('tag')) {
             $tag = $tags->findOneBy(['name' => $request->query->get('tag')]);
         }
 
+        $em = $this->getDoctrine()->getManager();
         $articles = $em->getRepository(Article::class)
             ->findLatest($tag);
 
@@ -49,7 +49,6 @@ class ArticleController extends Controller
      */
     public function showArticle(Request $request, Article $article, LikeServices $likes)
     {
-        $allLike = $likes->countLikes($article);
 
         $comments = new Comment();
 
@@ -69,6 +68,11 @@ class ArticleController extends Controller
         $em = $this->getDoctrine()->getManager();
         $comments = $em->getRepository(Comment::class)
             ->findBy(['article' => $article]);
+
+        $allLike = $likes->countLikes($article);
+
+//        $allLike = $em->getRepository(UserLikeRepository::class)
+//            ->allLike();
 
 
         return $this->render('article.html.twig', [

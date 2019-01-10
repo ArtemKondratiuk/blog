@@ -16,9 +16,11 @@ class UserLikeRepository extends ServiceEntityRepository
 
     public function allLike()
     {
-        return $this->getEntityManager()
-            ->createQuery('
+        $qb = $this->createQueryBuilder('p')
+            ->select('p.likes')
+            ->from('App:UserLike', 'u')
+        ;
 
-            ');
+        return $qb;
     }
 }

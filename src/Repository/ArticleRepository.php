@@ -26,7 +26,7 @@ class ArticleRepository extends ServiceEntityRepository
              ->addSelect('a', 't')
              ->innerJoin('p.author', 'a')
              ->leftJoin('p.tags', 't')
-             ->where('p.publishedAt <= :now')
+             ->where('p.publishedAt <= :now', 'p.publish = true')
              ->orderBy('p.publishedAt', 'DESC')
              ->setParameter('now', new \DateTime());
 

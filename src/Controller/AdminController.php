@@ -99,7 +99,7 @@ class AdminController extends AbstractController
     {
         $article = new Article();
         $image = new Image();
-        $article->setAuthor($this->getUser());
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
@@ -112,8 +112,10 @@ class AdminController extends AbstractController
                 $image->setPath('/build/images/' . $fileName);
             }
 
+            $article->setAuthor($this->getUser());
             $image->setArticle($article);
             $article->addImage($image);
+            $article->setPublish(true);
 
             $em->persist($image);
             $em->persist($article);
@@ -168,5 +170,53 @@ class AdminController extends AbstractController
 
         return $this->redirectToRoute('article_index');
     }
+
+    /**
+     * @Route("/articles/to_publish", name="publish")
+     */
+    public function toPublish(Request $request, PaginatorInterface $paginator)
+    {
+        $em = $this->getDoctrine()->getManager();
+        $articles = $em->getRepository(Article::class)
+            ->findBy(['publish' => false]);
+
+        $pagination = $paginator->paginate(
+            $articles, /* query NOT result */
+            $request->query->getInt('page', 1)/*page number*/,
+            10/*limit per page*/
+        );
+
+        return $this->render('admin/to_publishArticle.html.twig', [
+            'pagination' => $pagination
+        ]);
+    }
+
+    /**
+     * @Route("/articles/to_publish/{id}", name="article_to_publish_show", methods="GET")
+     */
+    public function showToPublish(Article $article): Response
+    {
+        return $this->render('admin/show_to_Publish.htm.twig', ['article' => $article]);
+    }
+
+    /**
+     * @Route("/articles/to_publish_save/{id}", name="save", methods="GET")
+     */
+    public function saveToPublish($id): Response
+    {
+
+        $em = $this->getDoctrine()->getManager();
+        $article = $em->getRepository(Article::class)->find($id);
+
+        $article->setPublish('true');
+        $em->flush();
+
+        return $this->redirectToRoute('publish', ['id' => $article->getId()]);
+
+    }
+
+
+
+
 
 }
