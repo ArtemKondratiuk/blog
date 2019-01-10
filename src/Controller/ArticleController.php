@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-
 use App\Entity\Comment;
 use App\Entity\Article;
 use App\Repository\TagRepository;
@@ -14,7 +13,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
-
 class ArticleController extends Controller
 {
     /**
@@ -22,7 +20,6 @@ class ArticleController extends Controller
      */
     public function listArticle(Request $request, PaginatorInterface $paginator, TagRepository $tags)
     {
-
         $tag = null;
         if ($request->query->has('tag')) {
             $tag = $tags->findOneBy(['name' => $request->query->get('tag')]);
@@ -41,7 +38,6 @@ class ArticleController extends Controller
         return $this->render('base.html.twig', [
             'pagination' => $pagination
         ]);
-
     }
 
     /**
@@ -49,7 +45,6 @@ class ArticleController extends Controller
      */
     public function showArticle(Request $request, Article $article, LikeServices $likes)
     {
-
         $comments = new Comment();
 
         $article->addComment($comments);
@@ -71,9 +66,8 @@ class ArticleController extends Controller
 
         $allLike = $likes->countLikes($article);
 
-//        $allLike = $em->getRepository(UserLikeRepository::class)
+//        $allLike = $em->getRepository(UserLike::class)
 //            ->allLike();
-
 
         return $this->render('article.html.twig', [
                 'allLike' => $allLike,
@@ -103,14 +97,11 @@ class ArticleController extends Controller
                 ->setLikes(true);
             $em->persist($like);
             $em->flush();
-
         } else {
             $em->remove($like);
             $em->flush();
         }
 
         return $this->redirectToRoute('article', ['id' => $article->getId()]);
-
     }
-
 }

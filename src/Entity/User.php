@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
@@ -101,7 +100,6 @@ class User implements UserInterface
         $this->email = $email;
 
         return $this;
-
     }
 
     /**
@@ -226,6 +224,4 @@ class User implements UserInterface
         }
         return $this;
     }
-
-
 }

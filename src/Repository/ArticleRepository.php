@@ -22,7 +22,7 @@ class ArticleRepository extends ServiceEntityRepository
 
     public function findLatest(Tag $tag = null)
     {
-          $qb = $this->createQueryBuilder('p')
+        $qb = $this->createQueryBuilder('p')
              ->addSelect('a', 't')
              ->innerJoin('p.author', 'a')
              ->leftJoin('p.tags', 't')
@@ -38,4 +38,15 @@ class ArticleRepository extends ServiceEntityRepository
         return $qb;
     }
 
+//    public function toPublish()
+//    {
+//        $qb = $this->createQueryBuilder('p')
+//            ->select('count(p.publish)')
+//            ->from('App:Article', 'u')
+//            ->getQuery()
+//            ->getResult()
+//        ;
+//
+//        return $qb;
+//    }
 }

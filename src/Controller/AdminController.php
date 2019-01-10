@@ -33,7 +33,6 @@ class AdminController extends AbstractController
      */
     public function articleManager(Request $request, PaginatorInterface $paginator): Response
     {
-
         $em = $this->getDoctrine()->getManager();
         $articles = $em->getRepository(Article::class)
             ->findLatest();
@@ -54,7 +53,6 @@ class AdminController extends AbstractController
      */
     public function userManager(Request $request, PaginatorInterface $paginator): Response
     {
-
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(User::class)
             ->findAll();
@@ -75,7 +73,6 @@ class AdminController extends AbstractController
      */
     public function editUser(Request $request, User $user)
     {
-
         $em = $this->getDoctrine()->getManager();
         $form = $this->createForm(UserEditType::class, $user);
         $form->handleRequest($request);
@@ -204,7 +201,6 @@ class AdminController extends AbstractController
      */
     public function saveToPublish($id): Response
     {
-
         $em = $this->getDoctrine()->getManager();
         $article = $em->getRepository(Article::class)->find($id);
 
@@ -212,11 +208,5 @@ class AdminController extends AbstractController
         $em->flush();
 
         return $this->redirectToRoute('publish', ['id' => $article->getId()]);
-
     }
-
-
-
-
-
 }

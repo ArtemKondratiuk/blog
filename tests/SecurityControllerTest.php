@@ -17,6 +17,5 @@ class SecurityControllerTest extends WebTestCase
         $text = $crawler->filter('body > form > h1')->text();
 
         $this->assertEquals('Please sign in', $text);
-
     }
 }

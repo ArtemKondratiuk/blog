@@ -23,12 +23,20 @@
                 </header>
                 <h2>{{ article.title }}</h2>
                 <p>{{ article.text }}</p>
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <p><a class="button like" href="{{ path('like', { 'id':article.id }) }}"> ❤  {{ allLike }} </a></p>
-                {% else %}
-                    <p><a class="button like"> ❤  {{ allLike }} </a>
+                    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                        <p><a class="button like" href="{{ path('like', { 'id':article.id }) }}"> ❤
+                                {#{% for likes in article.userLikes %}#}
+                                    {{ allLike }}
+                                {#{% endfor %}#}
+                            </a></p>
+                    {% else %}
+                    <p><a class="button like"> ❤
+                            {#{% for likes in article.userLikes %}#}
+                                {{ allLike }}
+                            {#{% endfor %}#}
+                        </a>
                         Please <a href="{{ path('app_login') }}">Login</a></p>
-                {% endif %}
+                    {% endif %}
                 <p>{{ include('article_tags.html.twig') }}</p>
                 <div class="comment">
                 {% for comment in comments %}

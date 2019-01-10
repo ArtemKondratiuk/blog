@@ -45,8 +45,8 @@ class BloggerController extends Controller
             $em->persist($article);
             $em->flush();
 
-                return $this->redirectToRoute('bloger');
-            }
+            return $this->redirectToRoute('bloger');
+        }
 
         return $this->render('bloger/bloger.html.twig', [
             'article' => $article,

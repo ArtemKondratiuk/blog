@@ -7,7 +7,6 @@ use App\Entity\Tag;
 use App\Repository\TagRepository;
 use Symfony\Component\Form\DataTransformerInterface;
 
-
 class TagArrayToStringTransformer implements DataTransformerInterface
 {
     private $tags;

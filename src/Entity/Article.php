@@ -264,6 +264,4 @@ class Article
         $this->publish = $publish;
         return $this;
     }
-
-
 }
