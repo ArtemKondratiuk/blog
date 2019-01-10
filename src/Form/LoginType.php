@@ -25,5 +25,4 @@ class LoginType extends AbstractType
             'attr'=>['novalidate'=>'novalidate']
         ]);
     }
-
 }

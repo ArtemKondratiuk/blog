@@ -90,6 +90,12 @@ class Article
      */
     private $tags;
 
+    /**
+     * @ORM\Column(type="boolean")
+     * @Assert\NotNull()
+     */
+    private $publish = false;
+
 
     public function __construct()
     {
@@ -244,6 +250,18 @@ class Article
                 $userLike->setArticle(null);
             }
         }
+        return $this;
+    }
+
+
+    public function getPublish(): ?bool
+    {
+        return $this->publish;
+    }
+
+    public function setPublish(bool $publish): self
+    {
+        $this->publish = $publish;
         return $this;
     }
 }

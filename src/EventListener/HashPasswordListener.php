@@ -33,5 +33,4 @@ class HashPasswordListener implements EventSubscriber
     {
         return ['prePersist', 'preUpdate'];
     }
-
 }

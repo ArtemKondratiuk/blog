@@ -10,16 +10,14 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 
-
 class ArticleType extends AbstractType
 {
-
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('title', TextareaType::class)
             ->add('text', TextareaType::class)
-            ->add('tags', TagsInputType::class,[
+            ->add('tags', TagsInputType::class, [
                 'required' => false,
             ])
             ->add('images', FileType::class, [

@@ -45,7 +45,6 @@ class Tag
     {
         $this->article = $article;
         return $this;
-
     }
 
     public function setName(string $name): self

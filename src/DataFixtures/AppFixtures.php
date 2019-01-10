@@ -12,7 +12,6 @@ use App\Entity\Comment;
 use App\Entity\Tag;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
-
 class AppFixtures extends Fixture
 {
     private $passwordEncoder;
@@ -23,9 +22,7 @@ class AppFixtures extends Fixture
     }
 
     public function load(ObjectManager $manager)
-
     {
-
         $user1 = new User();
         $encodedPassword = $this->passwordEncoder->encodePassword($user1, '123123');
         $user1
@@ -57,7 +54,7 @@ class AppFixtures extends Fixture
             ->setRoles(['ROLE_BLOGER']);
         $manager->persist($user3);
 
-        for($i=0; $i<20; $i++) {
+        for ($i=0; $i<20; $i++) {
             $article =new Article();
             $images = new Image();
             $images->setFileName(('symfony4.png'));
@@ -79,7 +76,7 @@ class AppFixtures extends Fixture
             $tag->setName('some tag'.$i);
             $manager->persist($tag);
             $article->addTag($tag);
-
+            $article->setPublish(true);
 
             $manager->persist($article);
 
@@ -90,10 +87,5 @@ class AppFixtures extends Fixture
             $manager->persist($comment);
         }
         $manager->flush();
-
     }
-
-
-
 }
-

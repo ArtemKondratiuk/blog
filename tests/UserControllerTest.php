@@ -13,6 +13,5 @@ class UserControllerTest extends WebTestCase
         $client->request('GET', '/registration');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-
     }
 }

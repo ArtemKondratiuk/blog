@@ -5,7 +5,7 @@ namespace App\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use App\Form\ArticleType;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+use App\Services\ImageUploader;
 use App\Entity\Article;
 use App\Entity\Image;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,44 +20,34 @@ class BloggerController extends Controller
     /**
      * @Route("/", name="bloger")
      */
-    public function bloger(Request $request)
+    public function bloger(Request $request, ImageUploader $imageUploader)
     {
         $article = new Article();
-        $article->setAuthor($this->getUser());
+        $image = new Image();
+
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $files = $request->files->get('article')['images'];
-            /** @var UploadedFile $file */
-
             foreach ($files as $file) {
-                $image = new Image();
-
-                $fileName = md5(uniqid()) . $file->guessExtension();
+                $fileName = $imageUploader->upload($file);
                 $image->setFileName($fileName);
-
-                $image->setPath(
-                    '/build/images/' . $fileName
-                );
-
-                $file->move(
-                    $this->getParameter('image_directory'),
-                    $fileName
-                );
-
-                $image->setArticle($article);
-                $article->addImage($image);
-
-                $em->persist($image);
-                $em->persist($article);
-                $em->flush();
-
-                return $this->redirectToRoute('bloger');
+                $image->setPath('/build/images/' . $fileName);
             }
 
+            $article->setAuthor($this->getUser());
+            $image->setArticle($article);
+            $article->addImage($image);
+
+            $em->persist($image);
+            $em->persist($article);
+            $em->flush();
+
+            return $this->redirectToRoute('bloger');
         }
+
         return $this->render('bloger/bloger.html.twig', [
             'article' => $article,
             'form' => $form->createView(),

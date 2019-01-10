@@ -40,7 +40,7 @@ class UserLike
     }
 
     /**
-     * @return mixed
+     * @return bool
      */
     public function getLikes(): ?bool
     {
@@ -48,7 +48,7 @@ class UserLike
     }
 
     /**
-     * @param mixed $likes
+     * @param bool $likes
      * @return UserLike
      */
     public function setLikes(?bool $likes): self
@@ -96,10 +96,8 @@ class UserLike
         return $this;
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->likes;
     }
-
-
-
 }

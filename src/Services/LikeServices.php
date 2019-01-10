@@ -11,13 +11,12 @@ class LikeServices
     {
         $countLikes = $article->getUserLikes();
         $allLikes = count($countLikes);
-        foreach($countLikes as $like){
-            if($like->getLikes()==false){
+        foreach ($countLikes as $like) {
+            if ($like->getLikes()==false) {
                 $countLikes--;
             }
         }
 
         return $allLikes;
     }
-
 }

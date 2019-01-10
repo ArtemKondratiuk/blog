@@ -6,7 +6,6 @@ use App\Entity\UserLike;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-
 class UserLikeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
@@ -14,11 +13,15 @@ class UserLikeRepository extends ServiceEntityRepository
         parent::__construct($registry, UserLike::class);
     }
 
-    public function allLike()
-    {
-        return $this->getEntityManager()
-            ->createQuery('
-
-            ');
-    }
+//    public function allLike()
+//    {
+//        $qb = $this->createQueryBuilder('p')
+//            ->select('count(p.likes)')
+//            ->from('App:UserLike', 'u')
+//            ->getQuery()
+//            ->getResult()
+//        ;
+//
+//        return $qb;
+//    }
 }
