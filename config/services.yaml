@@ -12,13 +12,17 @@ services:
         arguments:
             $targetDirectory: '%image_directory%'
 
+    sensio_framework_extra.view.listener:
+        alias: Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener
+
     App\Services\LikeServices:
         autowire: true
-#    app.doctrine.hash_password_listener:
-#        class: App\EventListener\HashPasswordListener
-#        autowire: true
-#        tags:
-#            - { name: doctrine.event_subscriber }
+
+    app.doctrine.hash_password_listener:
+        class: App\EventListener\HashPasswordListener
+        autowire: true
+        tags:
+            - { name: doctrine.event_subscriber }
 #    user_listener:
 #        class: App\EntityListener\UserListener
 #        tags:

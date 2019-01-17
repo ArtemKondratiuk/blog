@@ -1,0 +1,16 @@
+<main>
+    {% for article in  pagination %}
+        <article>
+            <header>
+                {% for image in article.images %}
+                    <img src="{{ asset(image.path) }}" alt="">
+                {% endfor %}
+                <p class="publish">Posted by <span class="highlight">{{article.author.firstname}}</span> at {{ article.publishedAt|date('l, F j, Y, h:iA') }}
+            </header>
+            <a href="{{ path('article', { 'id': article.id }) }}"><h2>{{ article.title[:50] }}</h2></a>
+            <p>{{ article.text[:500] ~ '...' }}</p>
+            <p>{{ include('article_tags.html.twig') }}</p>
+            <p><a class="more" href="{{ path('article', { 'id': article.id }) }}">read more...</a></p>
+        </article>
+    {% endfor %}
+</main>

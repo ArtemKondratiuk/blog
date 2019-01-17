@@ -10,47 +10,63 @@ use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Article;
 use App\Entity\Comment;
 use App\Entity\Tag;
+use Ramsey\Uuid\Uuid;
+use App\Security\TokenAuthenticator;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class AppFixtures extends Fixture
 {
     private $passwordEncoder;
+    private $tokenAuthenticator;
 
-    public function __construct(UserPasswordEncoderInterface $passwordEncoder)
+    public function __construct(UserPasswordEncoderInterface $passwordEncoder, TokenAuthenticator $tokenAuthenticator)
     {
         $this->passwordEncoder = $passwordEncoder;
+        $this->tokenAuthenticator = $tokenAuthenticator;
     }
 
     public function load(ObjectManager $manager)
     {
         $user1 = new User();
         $encodedPassword = $this->passwordEncoder->encodePassword($user1, '123123');
+        try {
+            $uuid = Uuid::uuid4();
+        } catch (\Exception $e) {
+        }
         $user1
             ->setFirstName('admin')
             ->setLastName('admin')
             ->setEmail('admin@gmail.com')
             ->setPassword($encodedPassword)
-//            ->setPassword('123456')
+            ->setApiToken($uuid->toString())
             ->setRoles(['ROLE_ADMIN']);
         $manager->persist($user1);
         $user2 = new User();
         $encodedPassword = $this->passwordEncoder->encodePassword($user2, '123123');
+        try {
+            $uuid = Uuid::uuid4();
+        } catch (\Exception $e) {
+        }
         $user2
             ->setFirstName('reader')
             ->setLastName('reader')
             ->setEmail('reader@gmail.com')
             ->setPassword($encodedPassword)
-//            ->setPassword('123456')
+            ->setApiToken($uuid->toString())
             ->setRoles(['ROLE_READER']);
         $manager->persist($user2);
         $user3 = new User();
         $encodedPassword = $this->passwordEncoder->encodePassword($user3, '123123');
+        try {
+            $uuid = Uuid::uuid4();
+        } catch (\Exception $e) {
+        }
         $user3
             ->setFirstName('bloger')
             ->setLastName('bloger')
             ->setEmail('bloger@gmail.com')
             ->setPassword($encodedPassword)
-//            ->setPassword('123456')
+            ->setApiToken($uuid->toString())
             ->setRoles(['ROLE_BLOGER']);
         $manager->persist($user3);
 
@@ -62,7 +78,6 @@ class AppFixtures extends Fixture
             $images->setArticle($article);
             $manager->persist($images);
             $article->setTitle('A day with Symfony4 №' . $i);
-//            $article->addImage($images);
             $article->setText('Lorem ipsum dolor sit amet, consectetur adipiscing eletra electrify 
             denim vel ports.\nLorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ut velocity magna. 
             Etiam vehicula nunc non leo hendrerit commodo. Vestibulum vulputate mauris eget erat congue dapibus 
@@ -82,7 +97,7 @@ class AppFixtures extends Fixture
 
             $comment = new Comment();
             $comment->setText('some comment'.$i);
-            $comment->setAuthor($user2);
+            $comment->setAuthor($user1);
             $comment->setArticle($article);
             $manager->persist($comment);
         }

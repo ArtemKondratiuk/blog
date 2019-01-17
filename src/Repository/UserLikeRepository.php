@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\UserLike;
+use App\Entity\Article;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
@@ -13,15 +14,13 @@ class UserLikeRepository extends ServiceEntityRepository
         parent::__construct($registry, UserLike::class);
     }
 
-//    public function allLike()
-//    {
-//        $qb = $this->createQueryBuilder('p')
-//            ->select('count(p.likes)')
-//            ->from('App:UserLike', 'u')
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//
-//        return $qb;
-//    }
+    public function allLike(Article $article)
+    {
+        return $this->createQueryBuilder('ul')
+            ->andWhere('ul.article = :article')
+            ->setParameter('article', $article)
+            ->select('COUNT(ul)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 }

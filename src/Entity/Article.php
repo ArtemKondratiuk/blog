@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
  * @ORM\Table(name="article")
  */
-class Article
+class Article implements \JsonSerializable
 {
     /**
      * @var int
@@ -99,7 +99,10 @@ class Article
 
     public function __construct()
     {
-        $this->publishedAt = new \DateTime();
+        try {
+            $this->publishedAt = new \DateTime();
+        } catch (\Exception $e) {
+        }
         $this->comments = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->userLikes = new ArrayCollection();
@@ -263,5 +266,15 @@ class Article
     {
         $this->publish = $publish;
         return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'text' => $this->getText(),
+            'user' => $this->getAuthor()->getId(),
+        ];
     }
 }

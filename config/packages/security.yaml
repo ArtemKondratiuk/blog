@@ -30,8 +30,10 @@ security:
                 password_parameter: login[password]
                 default_target_path: /
             guard:
+                entry_point: App\Security\AppCustomAuthenticator
                 authenticators:
                     - App\Security\AppCustomAuthenticator
+                    - App\Security\TokenAuthenticator
             logout:
                 path: app_logout
 

@@ -23,7 +23,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/", name="dashboard", methods="GET")
      */
-    public function dashboard()
+    public function dashboardAction()
     {
         return $this->render('admin/dashboard.html.twig');
     }
@@ -31,7 +31,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/all-articles", name="article_index", methods="GET")
      */
-    public function articleManager(Request $request, PaginatorInterface $paginator): Response
+    public function articleManagerAction(Request $request, PaginatorInterface $paginator): Response
     {
         $em = $this->getDoctrine()->getManager();
         $articles = $em->getRepository(Article::class)
@@ -51,7 +51,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/all-user", name="user_index", methods="GET")
      */
-    public function userManager(Request $request, PaginatorInterface $paginator): Response
+    public function userManagerAction(Request $request, PaginatorInterface $paginator): Response
     {
         $em = $this->getDoctrine()->getManager();
         $user = $em->getRepository(User::class)
@@ -71,7 +71,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/user-edit/{id}", name="user-edit")
      */
-    public function editUser(Request $request, User $user)
+    public function editUserAction(Request $request, User $user)
     {
         $em = $this->getDoctrine()->getManager();
         $form = $this->createForm(UserEditType::class, $user);
@@ -92,7 +92,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/new", name="article_new", methods="GET|POST")
      */
-    public function new(Request $request, ImageUploader $imageUploader): Response
+    public function newAction(Request $request, ImageUploader $imageUploader): Response
     {
         $article = new Article();
         $image = new Image();
@@ -129,7 +129,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/{id}", name="article_show", methods="GET")
      */
-    public function show(Article $article): Response
+    public function showAction(Article $article): Response
     {
         return $this->render('admin/show.html.twig', ['article' => $article]);
     }
@@ -137,7 +137,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/{id}/edit", name="article_edit", methods="GET|POST")
      */
-    public function edit(Request $request, Article $article): Response
+    public function editAction(Request $request, Article $article): Response
     {
         $form = $this->createForm(ArticleType::class, $article);
         $form->handleRequest($request);
@@ -157,7 +157,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/{id}", name="article_delete", methods="DELETE")
      */
-    public function delete(Request $request, Article $article): Response
+    public function deleteAction(Request $request, Article $article): Response
     {
         if ($this->isCsrfTokenValid('delete'.$article->getId(), $request->request->get('_token'))) {
             $em = $this->getDoctrine()->getManager();
@@ -171,7 +171,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/articles/to_publish", name="publish")
      */
-    public function toPublish(Request $request, PaginatorInterface $paginator)
+    public function toPublishAction(Request $request, PaginatorInterface $paginator)
     {
         $em = $this->getDoctrine()->getManager();
         $articles = $em->getRepository(Article::class)
@@ -191,7 +191,7 @@ class AdminController extends AbstractController
     /**
      * @Route("/articles/to_publish/{id}", name="article_to_publish_show", methods="GET")
      */
-    public function showToPublish(Article $article): Response
+    public function showToPublishAction(Article $article): Response
     {
         return $this->render('admin/show_to_Publish.htm.twig', ['article' => $article]);
     }
