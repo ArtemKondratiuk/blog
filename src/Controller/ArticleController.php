@@ -4,10 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Article;
-use App\Repository\TagRepository;
+use App\Entity\Tag;
 use App\Entity\UserLike;
-use App\Services\LikeServices;
 use App\Form\CommentType;
+use App\Services\LikeServices;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,14 +18,16 @@ class ArticleController extends Controller
     /**
      * @Route("/", name="homepage")
      */
-    public function listArticle(Request $request, PaginatorInterface $paginator, TagRepository $tags)
+    public function listArticleAction(Request $request, PaginatorInterface $paginator)
     {
+        $em = $this->getDoctrine()->getManager();
+
         $tag = null;
         if ($request->query->has('tag')) {
-            $tag = $tags->findOneBy(['name' => $request->query->get('tag')]);
+            $tag = $em->getRepository(Tag::class)
+                ->findOneBy(['name' => $request->query->get('tag')]);
         }
 
-        $em = $this->getDoctrine()->getManager();
         $articles = $em->getRepository(Article::class)
             ->findLatest($tag);
 
@@ -43,15 +45,15 @@ class ArticleController extends Controller
     /**
      * @Route("/article/{id}", name="article")
      */
-    public function showArticle(Request $request, Article $article, LikeServices $likes)
+    public function showArticleAction(Request $request, Article $article)
     {
         $comments = new Comment();
 
-        $article->addComment($comments);
         $form = $this->createForm(CommentType::class, $comments);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $article->addComment($comments);
             $comments->setAuthor($this->getUser());
             $em = $this->getDoctrine()->getManager();
             $em->persist($comments);
@@ -64,10 +66,8 @@ class ArticleController extends Controller
         $comments = $em->getRepository(Comment::class)
             ->findBy(['article' => $article]);
 
-        $allLike = $likes->countLikes($article);
-
-//        $allLike = $em->getRepository(UserLike::class)
-//            ->allLike();
+        $allLike = $em->getRepository(UserLike::class)
+            ->allLike($article);
 
         return $this->render('article.html.twig', [
                 'allLike' => $allLike,
@@ -80,27 +80,11 @@ class ArticleController extends Controller
     /**
      * @Route("/article/{id}/like", name="like")
      */
-    public function LikeAction(Article $article)
+    public function LikeAction(Article $article, LikeServices $likeServices)
     {
         $user = $this->getUser();
 
-        $em = $this->getDoctrine()->getManager();
-        $like = $em->getRepository(UserLike::class)
-            ->findOneBy(['user' => $user, 'article' => $article]);
-
-
-        if (!$like) {
-            $like = new UserLike();
-            $like
-                ->setArticle($article)
-                ->setUser($user)
-                ->setLikes(true);
-            $em->persist($like);
-            $em->flush();
-        } else {
-            $em->remove($like);
-            $em->flush();
-        }
+        $likeServices->LikesAction($article, $user);
 
         return $this->redirectToRoute('article', ['id' => $article->getId()]);
     }

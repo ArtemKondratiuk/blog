@@ -1,0 +1,15 @@
+<header>
+    <div class="center-block-main">
+        <nav>
+            <a href="{{ path('homepage') }}"><img src="{{ asset('build/images/logo.png') }}" alt="" class="logo"></a>
+            <ul class="menu">
+                <li><a href="{{ path('homepage') }}">Home</a></li>
+                <li><a href="{{ path('app_login') }}">Login</a></li>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <li><a href="{{ path('app_logout') }}">Logout</a></li>
+                {% endif %}
+                <li><a href="{{ path('app_user_register') }}">Registration</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>

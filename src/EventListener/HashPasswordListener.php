@@ -5,6 +5,7 @@ namespace App\EventListener;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use App\Entity\User;
+use Ramsey\Uuid\Uuid;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class HashPasswordListener implements EventSubscriber
@@ -27,10 +28,15 @@ class HashPasswordListener implements EventSubscriber
             $entity->getPassword()
         );
         $entity->setPassword($encoded);
+        try {
+            $uuid = Uuid::uuid4();
+        } catch (\Exception $e) {
+        }
+        $entity->setApiToken($uuid->toString());
     }
 
     public function getSubscribedEvents()
     {
-        return ['prePersist', 'preUpdate'];
+        return ['prePersist'];
     }
 }

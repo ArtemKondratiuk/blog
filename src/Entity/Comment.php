@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
  * @ORM\Table(name="comment")
  */
 class Comment
@@ -33,12 +33,12 @@ class Comment
      * @var string
      *
      * @ORM\Column(type="text")
-     * @Assert\NotBlank(message="comment.blank")
+     * @Assert\NotBlank(message="comment is empty")
      * @Assert\Length(
      *     min=5,
-     *     minMessage="comment.too_short",
+     *     minMessage="very short comment",
      *     max=10000,
-     *     maxMessage="comment.too_long"
+     *     maxMessage="very long comment"
      * )
      */
 
@@ -62,7 +62,10 @@ class Comment
 
     public function __construct()
     {
-        $this->publishedAt = new \DateTime();
+        try {
+            $this->publishedAt = new \DateTime();
+        } catch (\Exception $e) {
+        }
     }
 
     /**

@@ -16,7 +16,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @UniqueEntity("email", message="Email already taken")
  */
 //@ORM\EntityListeners({"App\EntityListener\UserListener"})
-class User implements UserInterface
+class User implements UserInterface, \JsonSerializable
 {
     /**
      * @ORM\Id
@@ -73,6 +73,11 @@ class User implements UserInterface
      * @ORM\OneToMany(targetEntity="App\Entity\UserLike", mappedBy="user")
      */
     private $userLikes;
+
+    /**
+    * @ORM\Column(type="string", unique=true)
+     */
+    private $apiToken;
 
 
     /**
@@ -223,5 +228,35 @@ class User implements UserInterface
             }
         }
         return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getApiToken()
+    {
+        return $this->apiToken;
+    }
+
+    /**
+     * @param string $apiToken
+     * @return User
+     */
+    public function setApiToken($apiToken): self
+    {
+        $this->apiToken = $apiToken;
+        return $this;
+    }
+
+    public function jsonSerialize()
+    {
+        return [
+            'id' => $this->getId(),
+            'email' => $this->getEmail(),
+            'firstName' => $this->getFirstName(),
+            'lastName' => $this->getLastName(),
+            'password' => $this->getPassword(),
+            'apiToken' => $this->getApiToken()
+        ];
     }
 }

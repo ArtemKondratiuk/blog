@@ -20,7 +20,7 @@ class BloggerController extends Controller
     /**
      * @Route("/", name="bloger")
      */
-    public function bloger(Request $request, ImageUploader $imageUploader)
+    public function blogerAction(Request $request, ImageUploader $imageUploader)
     {
         $article = new Article();
         $image = new Image();
